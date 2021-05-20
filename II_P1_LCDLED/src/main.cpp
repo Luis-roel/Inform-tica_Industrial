@@ -15,7 +15,19 @@ int outputState;
 int outputState2;
 int counter = 0;
 
+//Variables LED desvanecido
+int brillo = 0;//Estado del brillo
+int fadeLed = 2;//valores del LED
+int pwm = 10; //salida Led
+unsigned long tiempoActual;
+unsigned long tiempoloop;
+int intervalo=50; //el valor al que tarda a llegar para cumplor primer if
+
 void setup() {
+  pinMode(pwm,OUTPUT);
+  tiempoActual = millis(); //define el tiempo presente
+  tiempoloop = tiempoActual; //valor fijo hasta que termina el if
+  
   pinMode(LED,OUTPUT);
   pinMode(button1, INPUT);
   pinMode(button2, INPUT);
@@ -28,6 +40,8 @@ void setup() {
   lcd.print("Inicio");
   delay(2000);
   menu();
+  
+  
 }
 
 void loop() {
@@ -102,9 +116,21 @@ void menu(){
       lcd.print(":)");
       lcd.setCursor(0, 1);
       lcd.print("...");
-      delay(200);
-      digitalWrite(LED,LOW);
-      delay(200);
-      digitalWrite(LED,HIGH);
+      fade(intervalo);
       break;
-  }}
+  }
+  }
+  
+  void fade(int intervalo){
+  tiempoActual=millis();
+if(tiempoActual>= (tiempoloop+intervalo))
+{
+analogWrite(pwm,brillo);
+brillo = brillo+fadeLed; //variable que aumenta el valor de pwm
+if(brillo == 255){
+  fadeLed = -fadeLed; //Invierte valor pwm
+  }
+  tiempoloop = tiempoActual;
+}
+  }
+
